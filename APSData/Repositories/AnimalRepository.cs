@@ -22,8 +22,9 @@ namespace APSData.Repositories
                 .Include(a => a.Gender)
                 .Include(a => a.Species)
                 .Include(a => a.Location)
-                .Where(b => b.SpeciesID.Equals(speciesID))
-                .Where(b => b.LocationID.Equals(locationID))
+                .Where(a => a.Deleted == false)
+                .Where(a => a.SpeciesID == speciesID)
+                .Where(a => a.LocationID == locationID)
                 .ToList();
         }
 

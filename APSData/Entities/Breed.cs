@@ -13,5 +13,6 @@ namespace APSData.Entities
         // Field(s)
         [MaxLength(50)]
         public string Name { get; set; }
+        public bool Active { get; set; }
     }
 }

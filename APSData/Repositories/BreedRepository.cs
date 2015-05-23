@@ -11,20 +11,24 @@ namespace APSData.Repositories
         private APSContext _context = new APSContext();
         private bool _disposed;
 
-        public IEnumerable<Breed> GetBreeds()
+        public IEnumerable<Breed> GetBreedsBySpecies(long speciesID, bool includeInactives = false)
         {
-            return _context.Breeds.AsNoTracking().ToList();
-        }
-
-        public IEnumerable<Breed> GetBreedsBySpecies(long speciesID)
-        {
-            return _context.Breeds.AsNoTracking()
+            IQueryable<Breed> results = _context.Breeds.AsNoTracking()
                 .Where(b => b.SpeciesID.Equals(speciesID))
-                .Select(b => new { Breed = b, Weight = b.ID.Equals(22) ? 1 : (b.ID.Equals(81) ? 1 : 0)})
+                .Where(b => b.Active == true)
+                .Select(b => new { Breed = b, Weight = b.ID.Equals(22) ? 1 : (b.ID.Equals(81) ? 1 : 0) })
                 .OrderBy(b => b.Weight)
                 .ThenBy(b => b.Breed.Name)
-                .Select(b => b.Breed)
-                .ToList();
+                .Select(b => b.Breed);
+
+            if (includeInactives)
+            {
+                return results.ToList();
+            }
+            else
+            {
+                return results.Where(b => b.Active == true).ToList();
+            }
         }
 
         public int Save(Breed breed)
