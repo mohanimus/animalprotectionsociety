@@ -15,7 +15,8 @@ namespace APSData.Repositories
         {
             return _context.Timeslots
                 .AsNoTracking()
-                .ToList();
+                .ToList()
+                .OrderBy(t => Convert.ToDateTime(t.Time));
         }
 
         public IEnumerable<Timeslot> GetFreeTimeslots(DateTime date)
@@ -28,7 +29,8 @@ namespace APSData.Repositories
                     .Select(a => a.TimeslotID)
                     .Contains(t.ID))
                 .Where(t => t.Active == true)
-                .ToList();
+                .ToList()
+                .OrderBy(t => Convert.ToDateTime(t.Time));
         }
 
         public void BulkUpdateActive(List<long> idsToActivate)

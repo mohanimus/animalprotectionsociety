@@ -15,7 +15,6 @@ namespace APSData.Repositories
         {
             IQueryable<Breed> results = _context.Breeds.AsNoTracking()
                 .Where(b => b.SpeciesID.Equals(speciesID))
-                .Where(b => b.Active == true)
                 .Select(b => new { Breed = b, Weight = b.ID.Equals(22) ? 1 : (b.ID.Equals(81) ? 1 : 0) })
                 .OrderBy(b => b.Weight)
                 .ThenBy(b => b.Breed.Name)
@@ -29,6 +28,19 @@ namespace APSData.Repositories
             {
                 return results.Where(b => b.Active == true).ToList();
             }
+        }
+
+        public void BulkUpdateActive(List<long> idsToActivate, long speciesID)
+        {
+            IQueryable<Breed> breeds = _context.Breeds
+                .Where(b => b.SpeciesID.Equals(speciesID));
+
+            foreach (Breed breed in breeds)
+            {
+                breed.Active = idsToActivate.Contains(breed.ID);
+            }
+
+            _context.SaveChanges();
         }
 
         public int Save(Breed breed)
